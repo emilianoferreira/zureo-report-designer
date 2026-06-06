@@ -2,7 +2,7 @@
  * Design Canvas Component
  * The central A4 surface where users place and manipulate elements.
  * Renders header, detail, and footer sections with proper mm→px sizing.
- * Uses native mouse events for drag & resize (no interact.js dependency).
+ * Uses native mouse events for drag & resize.
  */
 import {
   Component,

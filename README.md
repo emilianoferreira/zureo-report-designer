@@ -13,7 +13,7 @@ Diseñador visual de plantillas de impresion para el ERP Zureo. Permite crear, e
 │  ┌──────────┐  ┌──────────────┐  ┌───────────┐  ┌───────────┐   │
 │  │ Template │  │   Design     │  │Properties │  │  Preview  │   │
 │  │   List   │→ │   Canvas     │  │  Panel    │  │  (HTML)   │   │
-│  └──────────┘  │ (interact.js)│  └───────────┘  └───────────┘   │
+│  └──────────┘  │(eventos nat.)│  └───────────┘  └───────────┘   │
 │                └──────────────┘                                 │
 │  Services: TemplateState | Selection | HtmlRenderer | Storage   │
 └──────────────────────┬──────────────────────────────────────────┘
