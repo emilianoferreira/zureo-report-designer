@@ -1,0 +1,233 @@
+<div class="properties-panel">
+  @if (element) {
+    <div class="panel-header">
+      <div>
+        <span class="type-badge">{{ elementTypeLabel }}</span>
+        <h2>{{ name }}</h2>
+      </div>
+      <div class="panel-actions">
+        <button class="icon-btn" (click)="duplicateElement()" title="Duplicar">Dup</button>
+        <button class="icon-btn danger" (click)="deleteElement()" title="Eliminar">X</button>
+      </div>
+    </div>
+
+    <section class="panel-section">
+      <h3>General</h3>
+      <label>
+        Nombre
+        <input type="text" [(ngModel)]="name" (blur)="applyChanges()" />
+      </label>
+
+      <div class="field-grid">
+        <label>
+          X mm
+          <input type="number" [(ngModel)]="x" (blur)="applyChanges()" step="0.5" />
+        </label>
+        <label>
+          Y mm
+          <input type="number" [(ngModel)]="y" (blur)="applyChanges()" step="0.5" />
+        </label>
+        <label>
+          Ancho
+          <input type="number" [(ngModel)]="width" (blur)="applyChanges()" min="2" step="0.5" />
+        </label>
+        <label>
+          Alto
+          <input type="number" [(ngModel)]="height" (blur)="applyChanges()" min="2" step="0.5" />
+        </label>
+      </div>
+
+      <div class="field-grid">
+        <label>
+          Capa
+          <input type="number" [(ngModel)]="zIndex" (blur)="applyChanges()" />
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="locked" (change)="applyChanges()" />
+          Bloqueado
+        </label>
+      </div>
+    </section>
+
+    @if (hasFont) {
+      <section class="panel-section">
+        <h3>Texto</h3>
+        <label>
+          Fuente
+          <select [(ngModel)]="fontFamily" (change)="applyChanges()">
+            @for (font of fontFamilies; track font) {
+              <option [value]="font">{{ font }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="field-grid">
+          <label>
+            Tamano
+            <input type="number" [(ngModel)]="fontSize" (change)="applyChanges()" min="4" max="72" step="1" />
+          </label>
+          <label>
+            Color
+            <input type="color" [(ngModel)]="fontColor" (change)="applyChanges()" />
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button [class.active]="fontWeight === 'bold'" (click)="toggleBold()">Negrita</button>
+          <button [class.active]="fontStyle === 'italic'" (click)="toggleItalic()">Cursiva</button>
+        </div>
+
+        <div class="field-grid">
+          <label>
+            Alineacion
+            <select [(ngModel)]="textAlign" (change)="applyChanges()">
+              <option value="left">Izquierda</option>
+              <option value="center">Centro</option>
+              <option value="right">Derecha</option>
+            </select>
+          </label>
+          <label>
+            Vertical
+            <select [(ngModel)]="verticalAlign" (change)="applyChanges()">
+              <option value="top">Arriba</option>
+              <option value="middle">Medio</option>
+              <option value="bottom">Abajo</option>
+            </select>
+          </label>
+        </div>
+      </section>
+    }
+
+    <section class="panel-section">
+      <h3>Datos</h3>
+
+      @if (element.type === 'text') {
+        <label>
+          Binding
+          <select [(ngModel)]="textBinding" (change)="applyChanges()">
+            <option value="">Texto fijo</option>
+            @for (field of dataPaths; track field.path) {
+              <option [value]="field.path">{{ field.label }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Texto fijo
+          <textarea [(ngModel)]="textContent" (blur)="applyChanges()" rows="3"></textarea>
+        </label>
+      }
+
+      @if (element.type === 'price') {
+        <label>
+          Precio
+          <input type="text" class="mono" [(ngModel)]="priceBinding" (blur)="applyChanges()" />
+        </label>
+        <label>
+          Moneda
+          <input type="text" class="mono" [(ngModel)]="priceCurrencyPath" (blur)="applyChanges()" />
+        </label>
+        <div class="field-grid">
+          <label>
+            Prefijo
+            <input type="text" [(ngModel)]="pricePrefix" (blur)="applyChanges()" />
+          </label>
+          <label>
+            Decimales
+            <input type="number" [(ngModel)]="priceDecimals" (change)="applyChanges()" min="0" max="4" />
+          </label>
+        </div>
+      }
+
+      @if (element.type === 'barcode') {
+        <label>
+          Datos
+          <input type="text" class="mono" [(ngModel)]="barcodeBinding" (blur)="applyChanges()" />
+        </label>
+        <label>
+          Tipo
+          <select [(ngModel)]="barcodeType" (change)="applyChanges()">
+            @for (type of barcodeTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="barcodeShowText" (change)="applyChanges()" />
+          Mostrar texto
+        </label>
+      }
+
+      @if (element.type === 'image') {
+        <label>
+          Origen
+          <select [(ngModel)]="imageSourceType" (change)="applyChanges()">
+            <option value="binding">Binding</option>
+            <option value="url">URL</option>
+          </select>
+        </label>
+        @if (imageSourceType === 'binding') {
+          <label>
+            Binding
+            <input type="text" class="mono" [(ngModel)]="imageBinding" (blur)="applyChanges()" />
+          </label>
+        } @else {
+          <label>
+            URL
+            <input type="text" [(ngModel)]="imageUrl" (blur)="applyChanges()" />
+          </label>
+        }
+        <label>
+          Ajuste
+          <select [(ngModel)]="imageFit" (change)="applyChanges()">
+            <option value="contain">Contener</option>
+            <option value="cover">Cubrir</option>
+            <option value="stretch">Estirar</option>
+          </select>
+        </label>
+      }
+    </section>
+
+    <section class="panel-section">
+      <h3>Apariencia</h3>
+      <div class="field-grid">
+        <label>
+          Fondo
+          <input type="color" [(ngModel)]="backgroundColor" (change)="applyChanges()" />
+        </label>
+        <label>
+          Opacidad
+          <input type="number" [(ngModel)]="opacity" (change)="applyChanges()" min="0" max="1" step="0.05" />
+        </label>
+      </div>
+      <div class="field-grid">
+        <label>
+          Borde
+          <input type="color" [(ngModel)]="borderColor" (change)="applyChanges()" />
+        </label>
+        <label>
+          Grosor
+          <input type="number" [(ngModel)]="borderWidth" (change)="applyChanges()" min="0" max="2" step="0.1" />
+        </label>
+      </div>
+      <div class="field-grid">
+        <label>
+          Estilo
+          <select [(ngModel)]="borderStyle" (change)="applyChanges()">
+            <option value="solid">Solido</option>
+            <option value="dashed">Guiones</option>
+            <option value="dotted">Puntos</option>
+          </select>
+        </label>
+        <label>
+          Radio
+          <input type="number" [(ngModel)]="borderRadius" (change)="applyChanges()" min="0" max="10" step="0.5" />
+        </label>
+      </div>
+    </section>
+  } @else {
+    <div class="empty-state">
+      <h2>Sin seleccion</h2>
+      <p>Selecciona un elemento de la etiqueta o arrastra una herramienta al canvas.</p>
+    </div>
+  }
+</div>

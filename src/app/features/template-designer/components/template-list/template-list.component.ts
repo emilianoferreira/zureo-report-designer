@@ -72,6 +72,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.showForm = true;
   }
 
+  openPriceLabelDesigner(): void {
+    this.router.navigate(['/price-labels']);
+  }
+
   openEditForm(mold: TemplateMold): void {
     this.editingMold = mold;
     this.showForm = true;

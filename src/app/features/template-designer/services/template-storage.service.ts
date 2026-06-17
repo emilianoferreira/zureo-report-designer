@@ -39,7 +39,9 @@ export class TemplateStorageService {
 
       if (apiMolds !== null) {
         this.useApi = true;
-        const molds = apiMolds.map(t => this.apiToMold(t));
+        const molds = apiMolds
+          .filter(t => t?.template_json?.type !== 'price-label')
+          .map(t => this.apiToMold(t));
         this.moldsSubject.next(molds);
         console.log(`[TemplateStorage] API mode (${molds.length} templates)`);
         return;

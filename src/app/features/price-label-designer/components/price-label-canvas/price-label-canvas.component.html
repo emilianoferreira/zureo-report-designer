@@ -1,0 +1,74 @@
+<div class="canvas-shell">
+  <div class="canvas-toolbar">
+    <div class="toolbar-group">
+      <button class="toolbar-btn" (click)="zoomOut()" title="Alejar">-</button>
+      <span class="zoom-label">{{ (zoom * 100) | number:'1.0-0' }}%</span>
+      <button class="toolbar-btn" (click)="zoomIn()" title="Acercar">+</button>
+    </div>
+    <div class="toolbar-readout">
+      Etiqueta {{ template.label.width }} x {{ template.label.height }} mm
+    </div>
+  </div>
+
+  <div class="canvas-scroll">
+    <div
+      class="label-surface"
+      [style.width.px]="labelWidthPx"
+      [style.height.px]="labelHeightPx"
+      (mousedown)="onCanvasMouseDown($event)"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop($event)"
+    >
+      <div class="padding-guide" [ngStyle]="paddingStyles"></div>
+
+      @for (element of template.elements; track trackElement($index, element)) {
+        <div
+          class="label-element"
+          [class.selected]="isSelected(element)"
+          [class.locked]="element.locked"
+          [ngStyle]="getElementStyles(element)"
+          (mousedown)="onElementMouseDown($event, element)"
+        >
+          @if (isSelected(element) && !element.locked) {
+            <button class="resize-handle nw" (mousedown)="onResizeMouseDown($event, element, 'nw')"></button>
+            <button class="resize-handle n" (mousedown)="onResizeMouseDown($event, element, 'n')"></button>
+            <button class="resize-handle ne" (mousedown)="onResizeMouseDown($event, element, 'ne')"></button>
+            <button class="resize-handle e" (mousedown)="onResizeMouseDown($event, element, 'e')"></button>
+            <button class="resize-handle se" (mousedown)="onResizeMouseDown($event, element, 'se')"></button>
+            <button class="resize-handle s" (mousedown)="onResizeMouseDown($event, element, 's')"></button>
+            <button class="resize-handle sw" (mousedown)="onResizeMouseDown($event, element, 'sw')"></button>
+            <button class="resize-handle w" (mousedown)="onResizeMouseDown($event, element, 'w')"></button>
+          }
+
+          @switch (element.type) {
+            @case ('text') {
+              <div class="element-content text-content" [ngStyle]="getContentStyles(element)">
+                {{ displayValue(element) }}
+              </div>
+            }
+            @case ('price') {
+              <div class="element-content price-content" [ngStyle]="getContentStyles(element)">
+                {{ displayValue(element) }}
+              </div>
+            }
+            @case ('barcode') {
+              <div class="element-content barcode-content">
+                <div class="barcode-bars"></div>
+                <span class="barcode-text">{{ displayValue(element) }}</span>
+              </div>
+            }
+            @case ('image') {
+              <div class="element-content image-content">
+                @if (imageSource(element)) {
+                  <img [src]="imageSource(element)" [style.object-fit]="imageFit(element)" draggable="false" />
+                } @else {
+                  <span>Imagen</span>
+                }
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

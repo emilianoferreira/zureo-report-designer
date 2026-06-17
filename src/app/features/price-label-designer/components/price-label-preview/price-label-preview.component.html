@@ -1,0 +1,46 @@
+<div class="preview-shell">
+  <div class="preview-toolbar">
+    <div class="toolbar-group">
+      <label>
+        Copias por articulo
+        <input type="number" [(ngModel)]="copies" (change)="onCopiesChange()" min="1" max="99" />
+      </label>
+    </div>
+
+    <div class="toolbar-group">
+      <button [class.active]="mode === 'sheet'" (click)="setMode('sheet')">Hoja A4</button>
+      <button [class.active]="mode === 'html'" (click)="setMode('html')">HTML</button>
+      <button [class.active]="mode === 'json'" (click)="setMode('json')">JSON</button>
+    </div>
+
+    <div class="toolbar-group">
+      <button (click)="print()">Imprimir</button>
+      <button (click)="exportHtml()">Exportar HTML</button>
+      <button (click)="exportJson()">Exportar JSON</button>
+    </div>
+  </div>
+
+  <div class="preview-body">
+    @if (mode === 'sheet') {
+      <div
+        class="frame-wrapper"
+        [style.width.px]="pageWidthPx"
+        [style.height.px]="pageHeightPx"
+        [style.transform]="'scale(' + zoom + ')'"
+      >
+        <iframe
+          #previewFrame
+          class="preview-frame"
+          [style.width.px]="pageWidthPx"
+          [style.height.px]="pageHeightPx"
+          sandbox="allow-same-origin"
+          title="Vista previa de etiquetas"
+        ></iframe>
+      </div>
+    } @else if (mode === 'html') {
+      <pre>{{ html }}</pre>
+    } @else {
+      <pre>{{ json }}</pre>
+    }
+  </div>
+</div>

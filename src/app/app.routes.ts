@@ -14,6 +14,12 @@ export const routes: Routes = [
         .then(m => m.TemplateListComponent)
   },
   {
+    path: 'price-labels',
+    loadComponent: () =>
+      import('./features/price-label-designer/components/price-label-designer/price-label-designer.component')
+        .then(m => m.PriceLabelDesignerComponent)
+  },
+  {
     path: 'designer/:id',
     loadComponent: () =>
       import('./features/template-designer/components/designer-page/designer-page.component')

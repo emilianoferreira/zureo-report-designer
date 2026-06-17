@@ -1,0 +1,175 @@
+<div class="label-designer-page">
+  <header class="designer-header">
+    <div class="header-left">
+      <button class="header-btn" (click)="goToDocuments()">Documentos</button>
+      <span class="header-separator"></span>
+      <input
+        class="template-name-input"
+        [ngModel]="template.name"
+        (blur)="updateName($any($event.target).value)"
+      />
+    </div>
+
+    <div class="header-center">
+      <button class="mode-btn" [class.active]="viewMode === 'design'" (click)="setViewMode('design')">
+        Diseno
+      </button>
+      <button class="mode-btn" [class.active]="viewMode === 'preview'" (click)="setViewMode('preview')">
+        Vista previa
+      </button>
+    </div>
+
+    <div class="header-right">
+      <select class="template-select" [ngModel]="template.id" (ngModelChange)="openTemplate($event)">
+        <option [value]="template.id">Actual</option>
+        @for (saved of savedTemplates; track saved.id) {
+          <option [value]="saved.id">{{ saved.name }}</option>
+        }
+      </select>
+      <button class="header-btn" (click)="createNewTemplate()">Nuevo</button>
+      <button class="header-btn primary" (click)="saveTemplate()">Guardar</button>
+      <button class="header-btn danger" (click)="deleteTemplate()">Eliminar</button>
+      @if (saveStatus) {
+        <span class="save-status">{{ saveStatus }}</span>
+      }
+    </div>
+  </header>
+
+  @if (viewMode === 'design') {
+    <div class="designer-body">
+      <aside class="left-panel">
+        <section class="panel-section">
+          <h2>Etiqueta</h2>
+          <label>
+            Tamano
+            <select [(ngModel)]="selectedPreset" (ngModelChange)="applyPreset($event)">
+              @for (preset of labelPresets; track preset.id) {
+                <option [value]="preset.id">{{ preset.label }}</option>
+              }
+            </select>
+          </label>
+          <div class="field-grid">
+            <label>
+              Ancho
+              <input type="number" [ngModel]="template.label.width" (ngModelChange)="updateLabelNumber('width', $event)" min="10" step="0.5" />
+            </label>
+            <label>
+              Alto
+              <input type="number" [ngModel]="template.label.height" (ngModelChange)="updateLabelNumber('height', $event)" min="10" step="0.5" />
+            </label>
+          </div>
+          <div class="field-grid">
+            <label>
+              Columnas
+              <input type="number" [ngModel]="template.label.columns" (ngModelChange)="updateLabelNumber('columns', $event)" min="1" step="1" />
+            </label>
+            <label>
+              Filas
+              <input type="number" [ngModel]="template.label.rows" (ngModelChange)="updateLabelNumber('rows', $event)" min="1" step="1" />
+            </label>
+          </div>
+          <div class="field-grid">
+            <label>
+              Gap X
+              <input type="number" [ngModel]="template.label.gapX" (ngModelChange)="updateLabelNumber('gapX', $event)" min="0" step="0.5" />
+            </label>
+            <label>
+              Gap Y
+              <input type="number" [ngModel]="template.label.gapY" (ngModelChange)="updateLabelNumber('gapY', $event)" min="0" step="0.5" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <h2>Padding</h2>
+          <div class="field-grid">
+            <label>
+              Sup.
+              <input type="number" [ngModel]="template.label.paddingTop" (ngModelChange)="updateLabelNumber('paddingTop', $event)" min="0" step="0.5" />
+            </label>
+            <label>
+              Der.
+              <input type="number" [ngModel]="template.label.paddingRight" (ngModelChange)="updateLabelNumber('paddingRight', $event)" min="0" step="0.5" />
+            </label>
+            <label>
+              Inf.
+              <input type="number" [ngModel]="template.label.paddingBottom" (ngModelChange)="updateLabelNumber('paddingBottom', $event)" min="0" step="0.5" />
+            </label>
+            <label>
+              Izq.
+              <input type="number" [ngModel]="template.label.paddingLeft" (ngModelChange)="updateLabelNumber('paddingLeft', $event)" min="0" step="0.5" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <h2>Hoja A4</h2>
+          <div class="field-grid">
+            <label>
+              Margen sup.
+              <input type="number" [ngModel]="template.page.marginTop" (ngModelChange)="updatePageNumber('marginTop', $event)" min="0" step="0.5" />
+            </label>
+            <label>
+              Margen der.
+              <input type="number" [ngModel]="template.page.marginRight" (ngModelChange)="updatePageNumber('marginRight', $event)" min="0" step="0.5" />
+            </label>
+            <label>
+              Margen inf.
+              <input type="number" [ngModel]="template.page.marginBottom" (ngModelChange)="updatePageNumber('marginBottom', $event)" min="0" step="0.5" />
+            </label>
+            <label>
+              Margen izq.
+              <input type="number" [ngModel]="template.page.marginLeft" (ngModelChange)="updatePageNumber('marginLeft', $event)" min="0" step="0.5" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <h2>Elementos</h2>
+          <div class="tool-list">
+            @for (tool of tools; track tool.type) {
+              <div
+                class="tool-item"
+                draggable="true"
+                (dragstart)="onToolDragStart($event, tool)"
+                [title]="tool.description"
+              >
+                <strong>{{ tool.label }}</strong>
+                <span>{{ tool.description }}</span>
+              </div>
+            }
+          </div>
+        </section>
+      </aside>
+
+      <main class="canvas-panel">
+        <app-price-label-canvas
+          [template]="template"
+          [selectedElementId]="selectedElementId"
+          [sampleArticle]="sampleArticles[0]"
+          [sampleCompany]="sampleCompany"
+          (elementSelected)="selectElement($event)"
+          (elementDropped)="onElementDropped($event)"
+          (elementChanged)="onElementChanged($event)"
+        />
+      </main>
+
+      <aside class="right-panel">
+        <app-price-label-properties
+          [element]="selectedElement"
+          (elementChanged)="onElementChanged($event)"
+          (deleteRequested)="deleteElement($event)"
+          (duplicateRequested)="duplicateElement($event)"
+        />
+      </aside>
+    </div>
+  } @else {
+    <main class="preview-panel">
+      <app-price-label-preview
+        [template]="template"
+        [articles]="sampleArticles"
+        [company]="sampleCompany"
+      />
+    </main>
+  }
+</div>
